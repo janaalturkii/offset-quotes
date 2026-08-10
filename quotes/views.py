@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quote, QuoteLineItem
 from .generator import generate_quote
-
+from django.http import HttpResponse
+from .pdf_export import generate_quote_pdf
 
 def dashboard(request):
     if request.method == "POST":
@@ -56,3 +57,12 @@ def quote_detail(request, quote_id):
 def quote_list(request):
     quotes = Quote.objects.all()
     return render(request, "quotes/quote_list.html", {"quotes": quotes})
+
+def quote_pdf(request, quote_id):
+    quote = get_object_or_404(Quote, id=quote_id)
+    line_items = quote.line_items.all()
+    pdf_buffer = generate_quote_pdf(quote, line_items)
+
+    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="offset-events-quote-{quote.id}.pdf"'
+    return response

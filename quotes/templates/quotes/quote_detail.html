@@ -18,6 +18,7 @@
         <a href="{% url 'quote_list' %}">All Quotes</a>
     </nav>
     <h1>Quote for {{ quote.client_name|default:"Unnamed Client" }}</h1>
+    <p><a href="{% url 'quote_pdf' quote.id %}" style="background: #002360; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Download PDF</a></p>
     <p><strong>Original brief:</strong> {{ quote.client_brief }}</p>
 
     <h2>Line Items</h2>
