@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quote Detail - Offset Events</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; }
+        nav a { margin-right: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td, th { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+        h1 { color: #1a2b4c; }
+        .total { font-weight: bold; font-size: 1.2em; margin-top: 15px; }
+        .notes-box { background: #f4f4f4; padding: 15px; border-left: 4px solid #1a2b4c; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'dashboard' %}">New Quote</a>
+        <a href="{% url 'quote_list' %}">All Quotes</a>
+    </nav>
+    <h1>Quote for {{ quote.client_name|default:"Unnamed Client" }}</h1>
+    <p><strong>Original brief:</strong> {{ quote.client_brief }}</p>
+
+    <h2>Line Items</h2>
+    <table>
+        <tr><th>Description</th><th>Category</th><th>Price (SAR)</th></tr>
+        {% for item in line_items %}
+        <tr>
+            <td>{{ item.description }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.estimated_price }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No line items generated.</td></tr>
+        {% endfor %}
+    </table>
+
+    <div class="notes-box">
+        <strong>Full generated quote:</strong>
+        <pre style="white-space: pre-wrap; font-family: Arial;">{{ quote.generated_quote_text }}</pre>
+    </div>
+</body>
+</html>

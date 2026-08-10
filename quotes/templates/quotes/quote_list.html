@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Quotes - Offset Events</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; }
+        nav a { margin-right: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td, th { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+        h1 { color: #1a2b4c; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'dashboard' %}">New Quote</a>
+        <a href="{% url 'quote_list' %}">All Quotes</a>
+    </nav>
+    <h1>All Quotes</h1>
+    <table>
+        <tr><th>Client</th><th>Status</th><th>Date</th></tr>
+        {% for q in quotes %}
+        <tr>
+            <td><a href="{% url 'quote_detail' q.id %}">{{ q.client_name|default:"Unnamed" }}</a></td>
+            <td>{{ q.status }}</td>
+            <td>{{ q.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No quotes yet.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
