@@ -15,6 +15,7 @@ urlpatterns = [
     path('quotes/', views.quote_list, name='quote_list'),
     path('quote/<int:quote_id>/', views.quote_detail, name='quote_detail'),
     path('quote/<int:quote_id>/pdf/', views.quote_pdf, name='quote_pdf'),
+    path('api/quotes/<int:pk>/status/', api_views.update_quote_status_api, name='api_update_status'),
 
     # API endpoints
     path('api/quotes/', api_views.QuoteListAPIView.as_view(), name='api_quote_list'),

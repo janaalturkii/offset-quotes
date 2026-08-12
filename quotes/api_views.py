@@ -70,3 +70,25 @@ def generate_quote_api(request):
 
     serializer = QuoteSerializer(quote)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['PATCH'])
+def update_quote_status_api(request, pk):
+    """
+    PATCH /api/quotes/<id>/status/
+    Body: {"status": "sent"} or {"status": "accepted"}
+    """
+    try:
+        quote = Quote.objects.get(pk=pk)
+    except Quote.DoesNotExist:
+        return Response({"error": "Quote not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    new_status = request.data.get('status')
+    if new_status not in ['draft', 'sent', 'accepted']:
+        return Response(
+            {"error": "status must be one of: draft, sent, accepted"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    quote.status = new_status
+    quote.save()
+    return Response(QuoteSerializer(quote).data)
