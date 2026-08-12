@@ -23,6 +23,28 @@ This isn't a hypothetical tool — it's built for a business I'm actually develo
 5. **Branded PDF export** — one click generates a client-ready PDF matching Offset Events' navy branding, with a calculated total and VAT-inclusive note
 6. **Django admin** — browse, edit, or manually correct any quote and its line items directly
 
+## API Endpoints (Django REST Framework)
+
+Built to support the upcoming mobile app phase.
+
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| GET | `/api/quotes/` | List all quotes (paginated, 10 per page) |
+| GET | `/api/quotes/<id>/` | Get one quote with its line items |
+| POST | `/api/quotes/generate/` | Generate a new quote from a client brief via Claude |
+| PATCH | `/api/quotes/<id>/status/` | Update a quote's status (draft/sent/accepted) |
+
+**Example: generating a quote via API**
+
+```json
+POST /api/quotes/generate/
+{
+  "client_name": "Sarah Al-Otaibi",
+  "client_brief": "120 guests, outdoor event, need lighting and branding, budget 15000 SAR"
+}
+```
+
+Returns the full saved quote, including AI-generated line items with categories and pricing.
 ## Why Claude API, and why this counts as meaningful use
 
 The app doesn't just wrap Claude in a chat box — it uses it to do real structured business reasoning: inferring likely service categories from an unstructured request, estimating market-realistic Jeddah pricing, and flagging assumptions a human would want to double-check (e.g. *"catering not mentioned — confirm with client"*). That's the kind of judgment call that used to require me sitting down and thinking it through manually.
