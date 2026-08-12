@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Offset Events{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="brand-hero">
+        <img src="{% static 'images/logo-white.png' %}" alt="Offset Events">
+        <nav class="brand-nav">
+            <a href="{% url 'dashboard' %}">New Quote</a>
+            <a href="{% url 'quote_list' %}">All Quotes</a>
+        </nav>
+        <p class="tagline">{% block tagline %}Quotes, refined in seconds.{% endblock %}</p>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,47 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Offset Events - Quote Generator</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; }
-        nav a { margin-right: 15px; }
-        input[type="text"], textarea { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
-        textarea { min-height: 100px; }
-        button { padding: 10px 20px; background: #1a2b4c; color: white; border: none; cursor: pointer; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        td, th { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
-        h1 { color: #1a2b4c; }
-    </style>
-</head>
-<body>
-    <nav>
-        <a href="{% url 'dashboard' %}">New Quote</a>
-        <a href="{% url 'quote_list' %}">All Quotes</a>
-    </nav>
-    <h1>Offset Events — Quote Generator</h1>
+{% extends "quotes/base.html" %}
+{% block title %}New Quote — Offset Events{% endblock %}
+{% block tagline %}Turn a client brief into a priced quote, instantly.{% endblock %}
+
+{% block content %}
+<div class="card">
+    <span class="eyebrow">New Quote</span>
     <form method="post">
         {% csrf_token %}
-        <label>Client name (optional):</label>
-        <input type="text" name="client_name" placeholder="e.g. Sarah Al-Otaibi">
+        <label for="client_name">Client name (optional)</label>
+        <input type="text" id="client_name" name="client_name" placeholder="e.g. Sarah Al-Otaibi">
 
-        <label>Client brief:</label>
-        <textarea name="client_brief" placeholder="e.g. 120 guests, outdoor event, need lighting and branding, budget around 15000 SAR" required></textarea>
+        <label for="client_brief">Client brief</label>
+        <textarea id="client_brief" name="client_brief" placeholder="e.g. 120 guests, outdoor event, need lighting and branding, budget around 15000 SAR" required></textarea>
 
         <button type="submit">Generate Quote</button>
     </form>
+</div>
 
-    <h2>Recent Quotes</h2>
-    <table>
-        <tr><th>Client</th><th>Brief</th><th>Date</th></tr>
-        {% for q in recent_quotes %}
-        <tr>
-            <td><a href="{% url 'quote_detail' q.id %}">{{ q.client_name|default:"Unnamed" }}</a></td>
-            <td>{{ q.client_brief|truncatechars:50 }}</td>
-            <td>{{ q.created_at|date:"M d" }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">No quotes yet.</td></tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+<div class="divider left"></div>
+
+<span class="eyebrow">Recent Quotes</span>
+<table>
+    <tr><th>Client</th><th>Brief</th><th>Date</th></tr>
+    {% for q in recent_quotes %}
+    <tr>
+        <td><a href="{% url 'quote_detail' q.id %}" style="color: var(--navy-950); font-weight: 500;">{{ q.client_name|default:"Unnamed" }}</a></td>
+        <td>{{ q.client_brief|truncatechars:50 }}</td>
+        <td>{{ q.created_at|date:"M d" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No quotes yet — generate your first one above.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

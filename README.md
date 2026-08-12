@@ -74,4 +74,4 @@ Visit `http://127.0.0.1:8000/`.
 - Let users edit/regenerate individual line items instead of the whole quote
 - Track quote status changes (draft → sent → accepted) with a simple workflow
 - Add a lightweight cost dashboard showing total API spend across all quotes generated
-- Support multiple currencies for events outside Saudi Arabia
+- Support multiple currencies for events outside Saudi Arabiagit commit -m "Add README documenting the Offset Events capstone project"
