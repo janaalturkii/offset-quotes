@@ -66,3 +66,44 @@ def quote_pdf(request, quote_id):
     response = HttpResponse(pdf_buffer, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="offset-events-quote-{quote.id}.pdf"'
     return response
+
+def quote_edit(request, quote_id):
+    quote = get_object_or_404(Quote, id=quote_id)
+
+    if request.method == "POST":
+        # Update existing line items
+        for item in quote.line_items.all():
+            desc_key = f"description_{item.id}"
+            cat_key = f"category_{item.id}"
+            price_key = f"price_{item.id}"
+            delete_key = f"delete_{item.id}"
+
+            if delete_key in request.POST:
+                item.delete()
+                continue
+
+            item.description = request.POST.get(desc_key, item.description)
+            item.category = request.POST.get(cat_key, item.category)
+            item.estimated_price = request.POST.get(price_key, item.estimated_price)
+            item.save()
+
+        # Add a new line item, if the "add new" fields were filled in
+        new_desc = request.POST.get("new_description", "").strip()
+        if new_desc:
+            QuoteLineItem.objects.create(
+                quote=quote,
+                description=new_desc,
+                category=request.POST.get("new_category", "").strip(),
+                estimated_price=request.POST.get("new_price", 0) or 0,
+            )
+
+        if "finalize" in request.POST:
+            quote.status = "finalized"
+        else:
+            quote.status = "revised"
+
+        quote.save()
+        return redirect("quote_detail", quote_id=quote.id)
+
+    line_items = quote.line_items.all()
+    return render(request, "quotes/quote_edit.html", {"quote": quote, "line_items": line_items})

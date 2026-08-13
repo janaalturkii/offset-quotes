@@ -8,6 +8,7 @@
 <span class="status-tag">{{ quote.status }}</span>
 
 <a href="{% url 'quote_pdf' quote.id %}" class="btn" style="display: block; width: fit-content;">Download PDF</a>
+<a href="{% url 'quote_edit' quote.id %}" class="btn" style="display: block; width: fit-content; background: var(--blue-500); margin-top: 8px;">Edit / Revise Quote</a>
 
 <div class="divider left"></div>
 

@@ -3,10 +3,12 @@ from django.db import models
 
 class Quote(models.Model):
     STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('sent', 'Sent'),
-        ('accepted', 'Accepted'),
-    ]
+    ('draft', 'Draft'),
+    ('revised', 'Revised'),
+    ('finalized', 'Finalized'),
+    ('sent', 'Sent'),
+    ('accepted', 'Accepted'),
+]
 
     client_name = models.CharField(max_length=200, blank=True)
     client_brief = models.TextField(help_text="The raw client message describing what they need")

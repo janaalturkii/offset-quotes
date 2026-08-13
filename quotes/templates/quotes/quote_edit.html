@@ -1,0 +1,45 @@
+{% extends "quotes/base.html" %}
+{% block title %}Edit Quote — Offset Events{% endblock %}
+{% block tagline %}Review and refine before sending.{% endblock %}
+
+{% block content %}
+<span class="eyebrow">Editing Quote</span>
+<h1 style="margin-bottom: 8px;">{{ quote.client_name|default:"Unnamed Client" }}</h1>
+<span class="status-tag">{{ quote.status }}</span>
+
+<div class="divider left"></div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <span class="eyebrow">Line Items</span>
+    <table style="margin-bottom: 24px;">
+        <tr><th>Description</th><th>Category</th><th class="price">Price (SAR)</th><th>Remove</th></tr>
+        {% for item in line_items %}
+        <tr>
+            <td><input type="text" name="description_{{ item.id }}" value="{{ item.description }}" style="width: 100%; padding: 6px;"></td>
+            <td><input type="text" name="category_{{ item.id }}" value="{{ item.category }}" style="width: 100%; padding: 6px;"></td>
+            <td><input type="text" name="price_{{ item.id }}" value="{{ item.estimated_price }}" style="width: 90px; padding: 6px; text-align: right;"></td>
+            <td style="text-align: center;"><input type="checkbox" name="delete_{{ item.id }}"></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No line items yet.</td></tr>
+        {% endfor %}
+    </table>
+
+    <div class="card">
+        <span class="eyebrow">Add New Item</span>
+        <label>Description</label>
+        <input type="text" name="new_description" placeholder="e.g. Photography package">
+        <label>Category</label>
+        <input type="text" name="new_category" placeholder="e.g. Photography">
+        <label>Price (SAR)</label>
+        <input type="text" name="new_price" placeholder="0">
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <button type="submit" name="save_revision">Save as Revised</button>
+        <button type="submit" name="finalize" value="1" style="background: var(--blue-500);">Save &amp; Finalize</button>
+    </div>
+</form>
+{% endblock %}
