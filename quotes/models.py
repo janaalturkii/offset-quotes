@@ -30,6 +30,10 @@ class QuoteLineItem(models.Model):
     category = models.CharField(max_length=100, blank=True)
     estimated_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __str__(self):
+        return f"{self.description} - {self.estimated_price} SAR"
+
+
 class VATSettings(models.Model):
     """
     Singleton-style model: only one row should ever exist.
@@ -47,8 +51,22 @@ class VATSettings(models.Model):
         """Always returns the single settings row, creating it with defaults if it doesn't exist yet."""
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
-    
-    def __str__(self):
-        return f"{self.description} - {self.estimated_price} SAR"
 
-   
+
+class QuoteRevision(models.Model):
+    """
+    A snapshot of a Quote's state, saved automatically right before
+    an edit is applied - so the full edit history is never lost.
+    """
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='revisions')
+    client_name = models.CharField(max_length=200, blank=True)
+    client_brief = models.TextField(blank=True)
+    snapshot_text = models.TextField(help_text="The generated_quote_text at the time of this snapshot")
+    status_at_time = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Revision of Quote #{self.quote_id} at {self.created_at}"

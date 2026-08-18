@@ -44,4 +44,18 @@
     <span class="eyebrow">Full Generated Quote</span>
     <pre style="white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 0.9rem; margin-top: 10px; color: var(--ink);">{{ quote.generated_quote_text }}</pre>
 </div>
+
+{% if revisions %}
+<div style="margin-top: 32px;">
+    <span class="eyebrow">Revision History ({{ revisions.count }})</span>
+    {% for rev in revisions %}
+    <div class="card" style="margin-top: 12px;">
+        <p style="font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 8px;">
+            {{ rev.created_at|date:"M d, Y — g:i A" }} · was "{{ rev.status_at_time }}" · client: {{ rev.client_name|default:"—" }}
+        </p>
+        <pre style="white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--ink-soft); margin: 0;">{{ rev.snapshot_text|truncatechars:300 }}</pre>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

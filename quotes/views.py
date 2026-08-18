@@ -6,6 +6,7 @@ from .generator import generate_quote
 from .pdf_export import generate_quote_pdf
 from .models import VATSettings
 from .vat_utils import calculate_totals
+from .models import Quote, QuoteLineItem, VATSettings, QuoteRevision
 
 @login_required
 def dashboard(request):
@@ -65,7 +66,10 @@ def quote_detail(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
     line_items = quote.line_items.all()
     totals = calculate_totals(line_items)
-    return render(request, "quotes/quote_detail.html", {"quote": quote, "line_items": line_items, "totals": totals})
+    revisions = quote.revisions.all()
+    return render(request, "quotes/quote_detail.html", {
+        "quote": quote, "line_items": line_items, "totals": totals, "revisions": revisions
+    })
 
 
 @login_required
@@ -84,6 +88,15 @@ def quote_edit(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
 
     if request.method == "POST":
+        # Snapshot the current state BEFORE applying any changes
+        QuoteRevision.objects.create(
+            quote=quote,
+            client_name=quote.client_name,
+            client_brief=quote.client_brief,
+            snapshot_text=quote.generated_quote_text,
+            status_at_time=quote.status,
+        )
+
         quote.client_name = request.POST.get("client_name", quote.client_name).strip()
         quote.client_brief = request.POST.get("client_brief", quote.client_brief).strip()
 
@@ -116,7 +129,6 @@ def quote_edit(request, quote_id):
         else:
             quote.status = "revised"
 
-        # Rebuild the generated_quote_text so it reflects the current, edited line items
         current_items = quote.line_items.all()
         totals = calculate_totals(current_items)
         text_parts = [f"Client: {quote.client_name}", f"Brief: {quote.client_brief}", ""]
