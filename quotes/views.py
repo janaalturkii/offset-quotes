@@ -4,7 +4,8 @@ from django.http import HttpResponse
 from .models import Quote, QuoteLineItem
 from .generator import generate_quote
 from .pdf_export import generate_quote_pdf
-
+from .models import VATSettings
+from .vat_utils import calculate_totals
 
 @login_required
 def dashboard(request):
@@ -63,7 +64,8 @@ def quote_list(request):
 def quote_detail(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
     line_items = quote.line_items.all()
-    return render(request, "quotes/quote_detail.html", {"quote": quote, "line_items": line_items})
+    totals = calculate_totals(line_items)
+    return render(request, "quotes/quote_detail.html", {"quote": quote, "line_items": line_items, "totals": totals})
 
 
 @login_required
@@ -82,6 +84,9 @@ def quote_edit(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
 
     if request.method == "POST":
+        quote.client_name = request.POST.get("client_name", quote.client_name).strip()
+        quote.client_brief = request.POST.get("client_brief", quote.client_brief).strip()
+
         for item in quote.line_items.all():
             desc_key = f"description_{item.id}"
             cat_key = f"category_{item.id}"
@@ -111,7 +116,20 @@ def quote_edit(request, quote_id):
         else:
             quote.status = "revised"
 
+        # Rebuild the generated_quote_text so it reflects the current, edited line items
+        current_items = quote.line_items.all()
+        totals = calculate_totals(current_items)
+        text_parts = [f"Client: {quote.client_name}", f"Brief: {quote.client_brief}", ""]
+        for item in current_items:
+            text_parts.append(f"- {item.description} ({item.category}): {item.estimated_price} SAR")
+        text_parts.append(f"\nSubtotal: {totals['subtotal']} SAR")
+        if totals['vat_enabled']:
+            text_parts.append(f"VAT ({totals['vat_rate']}%): {totals['vat_amount']} SAR")
+        text_parts.append(f"Total: {totals['total']} SAR")
+
+        quote.generated_quote_text = "\n".join(text_parts)
         quote.save()
+
         return redirect("quote_detail", quote_id=quote.id)
 
     line_items = quote.line_items.all()
@@ -125,3 +143,15 @@ def quote_set_status(request, quote_id, new_status):
         quote.status = new_status
         quote.save()
     return redirect(request.META.get('HTTP_REFERER', 'quote_list'))
+
+@login_required
+def vat_settings(request):
+    settings_obj = VATSettings.get_settings()
+
+    if request.method == "POST":
+        settings_obj.vat_rate = request.POST.get("vat_rate", settings_obj.vat_rate)
+        settings_obj.vat_enabled = "vat_enabled" in request.POST
+        settings_obj.save()
+        return redirect("vat_settings")
+
+    return render(request, "quotes/vat_settings.html", {"settings": settings_obj})

@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import Quote, QuoteLineItem
+from .models import VATSettings
 
+@admin.register(VATSettings)
+class VATSettingsAdmin(admin.ModelAdmin):
+    list_display = ['vat_rate', 'vat_enabled', 'updated_at']
 
 class QuoteLineItemInline(admin.TabularInline):
     model = QuoteLineItem

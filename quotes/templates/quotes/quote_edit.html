@@ -1,16 +1,21 @@
 {% extends "quotes/base.html" %}
 {% block title %}Edit Quote — Offset Events{% endblock %}
 {% block tagline %}Review and refine before sending.{% endblock %}
-
 {% block content %}
 <span class="eyebrow">Editing Quote</span>
 <h1 style="margin-bottom: 8px;">{{ quote.client_name|default:"Unnamed Client" }}</h1>
 <span class="status-tag">{{ quote.status }}</span>
-
 <div class="divider left"></div>
-
 <form method="post">
     {% csrf_token %}
+
+    <div class="card">
+        <span class="eyebrow">Client Details</span>
+        <label for="client_name">Client Name</label>
+        <input type="text" name="client_name" id="client_name" value="{{ quote.client_name }}">
+        <label for="client_brief">Client Brief</label>
+        <textarea name="client_brief" id="client_brief">{{ quote.client_brief }}</textarea>
+    </div>
 
     <span class="eyebrow">Line Items</span>
     <table style="margin-bottom: 24px;">

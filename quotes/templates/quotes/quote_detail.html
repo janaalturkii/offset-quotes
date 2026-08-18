@@ -30,6 +30,15 @@
     <tr><td colspan="3">No line items generated.</td></tr>
     {% endfor %}
 </table>
+<div class="card" style="max-width: 320px; margin-left: auto; margin-top: 12px;">
+    <table style="margin: 0;">
+        <tr><td style="border: none; padding: 6px 0;">Subtotal</td><td class="price" style="border: none; padding: 6px 0;">{{ totals.subtotal }} SAR</td></tr>
+        {% if totals.vat_enabled %}
+        <tr><td style="border: none; padding: 6px 0;">VAT ({{ totals.vat_rate }}%)</td><td class="price" style="border: none; padding: 6px 0;">{{ totals.vat_amount }} SAR</td></tr>
+        {% endif %}
+        <tr><td style="border-top: 2px solid var(--navy-950); padding: 10px 0 0; font-weight: 600;">Total</td><td class="price" style="border-top: 2px solid var(--navy-950); padding: 10px 0 0; font-weight: 600;">{{ totals.total }} SAR</td></tr>
+    </table>
+</div>
 
 <div class="card" style="margin-top: 24px; border-left: 3px solid var(--blue-500);">
     <span class="eyebrow">Full Generated Quote</span>

@@ -1,0 +1,20 @@
+{% extends "quotes/base.html" %}
+{% block title %}VAT Settings — Offset Events{% endblock %}
+{% block tagline %}Configure tax handling for quotes.{% endblock %}
+
+{% block content %}
+<span class="eyebrow">VAT Settings</span>
+<div class="card" style="max-width: 440px; margin: 16px auto 0;">    <form method="post">
+        {% csrf_token %}
+        <label>
+            <input type="checkbox" name="vat_enabled" {% if settings.vat_enabled %}checked{% endif %} style="width: auto; margin-right: 8px;">
+            Apply VAT to quotes
+        </label>
+
+        <label for="vat_rate">VAT Rate (%)</label>
+        <input type="text" name="vat_rate" id="vat_rate" value="{{ settings.vat_rate }}">
+
+        <button type="submit">Save Settings</button>
+    </form>
+</div>
+{% endblock %}
