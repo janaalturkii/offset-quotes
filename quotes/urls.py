@@ -8,6 +8,7 @@ urlpatterns = [
     path('quote/<int:quote_id>/', views.quote_detail, name='quote_detail'),
     path('quote/<int:quote_id>/pdf/', views.quote_pdf, name='quote_pdf'),
     path('quote/<int:quote_id>/edit/', views.quote_edit, name='quote_edit'),
+    path('quote/<int:quote_id>/set-status/<str:new_status>/', views.quote_set_status, name='quote_set_status'),
 
     # API endpoints
     path('api/quotes/', api_views.QuoteListAPIView.as_view(), name='api_quote_list'),

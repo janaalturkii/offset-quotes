@@ -3,17 +3,42 @@
 {% block tagline %}Every quote you've generated, in one place.{% endblock %}
 
 {% block content %}
-<span class="eyebrow">All Quotes</span>
-<table>
-    <tr><th>Client</th><th>Status</th><th>Date</th></tr>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="eyebrow">All Quotes</span>
+    <a href="{% url 'dashboard' %}" class="btn">+ New Quote</a>
+</div>
+
+<table style="margin-top: 20px;">
+    <tr>
+        <th>Client</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+    </tr>
     {% for q in quotes %}
     <tr>
         <td><a href="{% url 'quote_detail' q.id %}" style="color: var(--navy-950); font-weight: 500;">{{ q.client_name|default:"Unnamed" }}</a></td>
         <td><span class="status-tag">{{ q.status }}</span></td>
         <td>{{ q.created_at|date:"M d, Y" }}</td>
+        <td>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.78rem;">
+                <a href="{% url 'quote_detail' q.id %}" style="color: var(--blue-500);">View</a>
+                <a href="{% url 'quote_edit' q.id %}" style="color: var(--blue-500);">Edit</a>
+                <a href="{% url 'quote_pdf' q.id %}" style="color: var(--blue-500);">PDF</a>
+                {% if q.status != 'sent' %}
+                <a href="{% url 'quote_set_status' q.id 'sent' %}" style="color: var(--ink-soft);">Mark Sent</a>
+                {% endif %}
+                {% if q.status != 'accepted' %}
+                <a href="{% url 'quote_set_status' q.id 'accepted' %}" style="color: #15803d;">Accept</a>
+                {% endif %}
+                {% if q.status != 'rejected' %}
+                <a href="{% url 'quote_set_status' q.id 'rejected' %}" style="color: #b91c1c;">Reject</a>
+                {% endif %}
+            </div>
+        </td>
     </tr>
     {% empty %}
-    <tr><td colspan="3">No quotes yet.</td></tr>
+    <tr><td colspan="4">No quotes yet. <a href="{% url 'dashboard' %}">Create your first one.</a></td></tr>
     {% endfor %}
 </table>
 {% endblock %}

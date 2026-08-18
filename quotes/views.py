@@ -116,3 +116,12 @@ def quote_edit(request, quote_id):
 
     line_items = quote.line_items.all()
     return render(request, "quotes/quote_edit.html", {"quote": quote, "line_items": line_items})
+
+@login_required
+def quote_set_status(request, quote_id, new_status):
+    quote = get_object_or_404(Quote, id=quote_id)
+    valid_statuses = [choice[0] for choice in Quote.STATUS_CHOICES]
+    if new_status in valid_statuses:
+        quote.status = new_status
+        quote.save()
+    return redirect(request.META.get('HTTP_REFERER', 'quote_list'))
