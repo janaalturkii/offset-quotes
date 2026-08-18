@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -130,7 +131,14 @@ LOGIN_REDIRECT_URL = 'dashboard'
 
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+        'OPTIONS': {
+            'host': 'smtp.gmail.com',
+            'port': 587,
+            'username': config('EMAIL_HOST_USER'),
+            'password': config('EMAIL_HOST_PASSWORD'),
+            'use_tls': True,
+        },
     },
 }
 
@@ -138,3 +146,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
+
+# Email settings - start with console backend for testing
+DEFAULT_FROM_EMAIL = 'Offset Events <off.set.events1@gmail.com>'

@@ -9,6 +9,7 @@ urlpatterns = [
     path('quote/<int:quote_id>/pdf/', views.quote_pdf, name='quote_pdf'),
     path('quote/<int:quote_id>/edit/', views.quote_edit, name='quote_edit'),
     path('quote/<int:quote_id>/set-status/<str:new_status>/', views.quote_set_status, name='quote_set_status'),
+    path('quote/<int:quote_id>/send-email/', views.quote_send_email, name='quote_send_email'),
     path('settings/vat/', views.vat_settings, name='vat_settings'),
 
     # API endpoints

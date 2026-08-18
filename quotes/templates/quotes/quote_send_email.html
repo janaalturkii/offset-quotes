@@ -1,0 +1,18 @@
+{% extends "quotes/base.html" %}
+{% block title %}Send Quote — Offset Events{% endblock %}
+{% block tagline %}Email this quote to the client.{% endblock %}
+
+{% block content %}
+<span class="eyebrow">Send Quote</span>
+<div class="card" style="max-width: 440px; margin: 16px auto 0;">
+    <p style="color: var(--ink-soft); font-size: 0.9rem; margin-bottom: 16px;">
+        Sending quote for <strong>{{ quote.client_name|default:"this client" }}</strong> as a PDF attachment.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <label for="client_email">Client Email</label>
+        <input type="text" name="client_email" id="client_email" placeholder="client@example.com" required>
+        <button type="submit" style="width: 100%; margin-top: 20px;">Send Quote</button>
+    </form>
+</div>
+{% endblock %}

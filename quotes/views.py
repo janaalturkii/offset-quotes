@@ -7,6 +7,7 @@ from .pdf_export import generate_quote_pdf
 from .models import VATSettings
 from .vat_utils import calculate_totals
 from .models import Quote, QuoteLineItem, VATSettings, QuoteRevision
+from django.core.mail import EmailMessage
 
 @login_required
 def dashboard(request):
@@ -167,3 +168,35 @@ def vat_settings(request):
         return redirect("vat_settings")
 
     return render(request, "quotes/vat_settings.html", {"settings": settings_obj})
+
+@login_required
+def quote_send_email(request, quote_id):
+    quote = get_object_or_404(Quote, id=quote_id)
+
+    if request.method == "POST":
+        client_email = request.POST.get("client_email", "").strip()
+        if not client_email:
+            return redirect("quote_detail", quote_id=quote.id)
+
+        line_items = quote.line_items.all()
+        pdf_buffer = generate_quote_pdf(quote, line_items)
+
+        email = EmailMessage(
+            subject=f"Your Quote from Offset Events — {quote.client_name or 'Quotation'}",
+            body=(
+                f"Hi {quote.client_name or 'there'},\n\n"
+                f"Please find attached your quotation from Offset Events.\n\n"
+                f"This quote is valid for 14 days. Let us know if you have any questions.\n\n"
+                f"Best regards,\nOffset Events"
+            ),
+            to=[client_email],
+        )
+        email.attach(f"offset-events-quote-{quote.id}.pdf", pdf_buffer.getvalue(), "application/pdf")
+        email.send()
+
+        quote.status = "sent"
+        quote.save()
+
+        return redirect("quote_detail", quote_id=quote.id)
+
+    return render(request, "quotes/quote_send_email.html", {"quote": quote})
