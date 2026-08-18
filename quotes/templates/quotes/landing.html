@@ -1,0 +1,31 @@
+{% extends "quotes/base.html" %}
+{% block title %}Offset Events — Quote Generator{% endblock %}
+{% block tagline %}Brand activations & event production, Jeddah.{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center; padding: 48px 32px;">
+    <span class="eyebrow">Welcome</span>
+    <h1 style="margin: 12px 0 16px;">Quotes, generated in seconds.</h1>
+    <p style="color: var(--ink-soft); max-width: 480px; margin: 0 auto 28px; line-height: 1.7;">
+        Offset Events builds outdoor and indoor brand activations across Jeddah — lighting, branding, staging, and full event production. This tool turns a client's request into a structured, priced quotation instantly, so our team can respond faster without sacrificing accuracy.
+    </p>
+    <a href="{% url 'login' %}" class="btn">Sign In to Continue</a>
+</div>
+
+<div class="divider left"></div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <span class="eyebrow">01 — Describe</span>
+        <p style="margin-top: 8px; color: var(--ink-soft); font-size: 0.9rem;">Type what the client needs in plain language — guest count, event type, budget.</p>
+    </div>
+    <div class="card">
+        <span class="eyebrow">02 — Generate</span>
+        <p style="margin-top: 8px; color: var(--ink-soft); font-size: 0.9rem;">AI drafts a structured quote with realistic line items and Jeddah market pricing.</p>
+    </div>
+    <div class="card">
+        <span class="eyebrow">03 — Refine & Send</span>
+        <p style="margin-top: 8px; color: var(--ink-soft); font-size: 0.9rem;">Review, adjust pricing, finalize, and export a branded PDF ready for the client.</p>
+    </div>
+</div>
+{% endblock %}

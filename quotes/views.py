@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from .models import Quote, QuoteLineItem
 from .generator import generate_quote
-from django.http import HttpResponse
 from .pdf_export import generate_quote_pdf
 
+
+@login_required
 def dashboard(request):
     if request.method == "POST":
         client_name = request.POST.get("client_name", "").strip()
@@ -47,17 +50,23 @@ def dashboard(request):
     recent_quotes = Quote.objects.all()[:5]
     return render(request, "quotes/dashboard.html", {"recent_quotes": recent_quotes})
 
+def landing(request):
+    return render(request, "quotes/landing.html")
 
+@login_required
+def quote_list(request):
+    quotes = Quote.objects.all()
+    return render(request, "quotes/quote_list.html", {"quotes": quotes})
+
+
+@login_required
 def quote_detail(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
     line_items = quote.line_items.all()
     return render(request, "quotes/quote_detail.html", {"quote": quote, "line_items": line_items})
 
 
-def quote_list(request):
-    quotes = Quote.objects.all()
-    return render(request, "quotes/quote_list.html", {"quotes": quotes})
-
+@login_required
 def quote_pdf(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
     line_items = quote.line_items.all()
@@ -67,11 +76,12 @@ def quote_pdf(request, quote_id):
     response['Content-Disposition'] = f'attachment; filename="offset-events-quote-{quote.id}.pdf"'
     return response
 
+
+@login_required
 def quote_edit(request, quote_id):
     quote = get_object_or_404(Quote, id=quote_id)
 
     if request.method == "POST":
-        # Update existing line items
         for item in quote.line_items.all():
             desc_key = f"description_{item.id}"
             cat_key = f"category_{item.id}"
@@ -87,7 +97,6 @@ def quote_edit(request, quote_id):
             item.estimated_price = request.POST.get(price_key, item.estimated_price)
             item.save()
 
-        # Add a new line item, if the "add new" fields were filled in
         new_desc = request.POST.get("new_description", "").strip()
         if new_desc:
             QuoteLineItem.objects.create(

@@ -8,10 +8,19 @@
 <body>
     <header class="brand-hero">
         <img src="{% static 'images/logo-white.png' %}" alt="Offset Events">
-        <nav class="brand-nav">
-            <a href="{% url 'dashboard' %}">New Quote</a>
-            <a href="{% url 'quote_list' %}">All Quotes</a>
-        </nav>
+      <nav class="brand-nav">
+    {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}">New Quote</a>
+        <a href="{% url 'quote_list' %}">All Quotes</a>
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: #C9D2EE; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 0; margin: 0; font-family: 'Inter', sans-serif;">Logout</button>
+        </form>
+    {% else %}
+        <a href="{% url 'landing' %}">Home</a>
+        <a href="{% url 'login' %}">Sign In</a>
+    {% endif %}
+</nav>
         <p class="tagline">{% block tagline %}Quotes, refined in seconds.{% endblock %}</p>
     </header>
     <main>

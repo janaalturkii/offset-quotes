@@ -1,25 +1,17 @@
 from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
-    path('quotes/', views.quote_list, name='quote_list'),
-    path('quote/<int:quote_id>/', views.quote_detail, name='quote_detail'),
-    path('quote/<int:quote_id>/pdf/', views.quote_pdf, name='quote_pdf'),
-]
-
 from . import views, api_views
 
 urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
+    path('', views.landing, name='landing'),
+    path('app/', views.dashboard, name='dashboard'),
     path('quotes/', views.quote_list, name='quote_list'),
     path('quote/<int:quote_id>/', views.quote_detail, name='quote_detail'),
     path('quote/<int:quote_id>/pdf/', views.quote_pdf, name='quote_pdf'),
-    path('api/quotes/<int:pk>/status/', api_views.update_quote_status_api, name='api_update_status'),
     path('quote/<int:quote_id>/edit/', views.quote_edit, name='quote_edit'),
 
     # API endpoints
     path('api/quotes/', api_views.QuoteListAPIView.as_view(), name='api_quote_list'),
     path('api/quotes/<int:pk>/', api_views.QuoteDetailAPIView.as_view(), name='api_quote_detail'),
     path('api/quotes/generate/', api_views.generate_quote_api, name='api_generate_quote'),
+    path('api/quotes/<int:pk>/status/', api_views.update_quote_status_api, name='api_update_status'),
 ]
